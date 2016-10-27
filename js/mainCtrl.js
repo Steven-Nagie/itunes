@@ -1,7 +1,7 @@
 angular.module('itunes').controller('mainCtrl', function($scope, itunesService){
   //This is setting up the default behavior of our ng-grid. The important thing to note is the 'data' property. The value is 'songData'. That means ng-grid is looking for songData on $scope and is putting whatever songData is into the grid.
   //This means when you make your iTunes request, you'll need to get back the information, parse it accordingly, then set it to songData on the scope -> $scope.songData = ...
-  $scope.gridOptions = { 
+  $scope.gridOptions = {
       data: 'songData',
       height: '110px',
       sortInfo: {fields: ['Song', 'Artist', 'Collection', 'Type'], directions: ['asc']},
@@ -22,11 +22,30 @@ angular.module('itunes').controller('mainCtrl', function($scope, itunesService){
 
   //Now write a function that will call the method on the itunesService that is responsible for getting the data from iTunes, whenever the user clicks the submit button
   //*remember, that method should be expecting an artist name. The artist name is coming from the input box on index.html, head over there and check if that input box is tied to any specific model we could use.
-  //Also note that that method should be retuning a promise, so you could use .then in this function. 
-    
-    //Code here
-  
+  //Also note that that method should be retuning a promise, so you could use .then in this function.
 
+    //Code here
+    // $scope.getSongData = itunesService.getArtist($scope.artist).then(function(response) {
+    //   // $scope.songData = response.data;
+    //   console.log(response.data);
+    // });
+
+    $scope.songInfo = [];
+    $scope.songData = [];
+    var songInfo;
+
+    $scope.getSongData = function() {
+      itunesService.getArtist($scope.artist).then(function(response) {
+        $scope.songInfo = response;
+        console.log($scope.songInfo);
+        songInfo = $scope.songInfo;
+      }).then(function() {
+        $scope.songData = itunesService.sortArtist(songInfo);
+        console.log($scope.songData);
+      });
+    };
+
+    // itunesService.sortArtist($scope.songInfo);
 
 
   //Check that the above method is working by entering a name into the input field on your web app, and then console.log the result.
@@ -34,19 +53,17 @@ angular.module('itunes').controller('mainCtrl', function($scope, itunesService){
 
 
 
-  //If everything worked you should see a huge array of objects inside your console. That's great! But unfortunately that's not what ng-grid is expecting. What you need to do now is sort the data you got back. This sounds like a great job for a service! Head back to your itunesService and complete the last instructions there. 
-  
+  //If everything worked you should see a huge array of objects inside your console. That's great! But unfortunately that's not what ng-grid is expecting. What you need to do now is sort the data you got back. This sounds like a great job for a service! Head back to your itunesService and complete the last instructions there.
 
-    
+
+
 
 
 
   //Now that your service is doing the heavy lifting (sorting/formatting), we can now put the result of calling that method onto $scope.songData so that ng-grid will find it and populate the page.
 
+  // $scope.songData = itunesService.sortArtist($scope.songInfo);
+
 
 
 });
-
-
-
-
